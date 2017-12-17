@@ -15,14 +15,16 @@ import de.frittenburger.form.Form;
 import de.frittenburger.form.UserAccount;
 import de.frittenburger.html.HtmlTemplate;
 
-public class FormPageCallBack extends PageCallback {
+public class FormPageCallBack<T extends Form> extends PageCallback {
 
 	
 	
-	private Class<? extends Form> form;
+	private final Class<T> form;
+	private final boolean singleton;
 
-	public FormPageCallBack(Class<? extends Form> form) {
+	public FormPageCallBack(Class<T> form, boolean singleton) {
 		this.form = form;
+		this.singleton = singleton;
 	}
 
 	@Override
@@ -48,16 +50,16 @@ public class FormPageCallBack extends PageCallback {
 		
 		
 		
-		List<Entry<String, Form>> data = database.getForms(form);
+		List<Entry<String,T>> data = database.getForms(form);
 		
 		
 		//List		
 		template.addNotice(data.get(0).getValue().getEntityName());
-		
-		template.addContentCollection(data,getPageKey());	
+			
+		template.addContentCollection(data,getPageKey(),(!singleton) || (cnt == 0));	
 
 		
-		
+	
 		
 	}
 	
@@ -92,14 +94,25 @@ public class FormPageCallBack extends PageCallback {
 		
 		}
 		
+		if(singleton)
+		{
+			switch(database.countForm(form))
+			{
+			case 0:
+				break;
+			case 1:
+				if(database.getForms(form).iterator().next().getKey().equals(id)) break; //Update of ID
+			default:
+				throw new AdminPanelException(AdminPanelException.TSystem,"singleton violation");
+			}
+		}
+		
 		database.addForm(id, formInstance);
 		
 		if(formInstance instanceof UserAccount)
 		{
 			return new Event(Event.ChangeUser,id);
 		}
-		
-		
 		return new Event(Event.NoOperation);
 	}
 	

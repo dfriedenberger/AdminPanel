@@ -6,7 +6,7 @@ public class Password extends TextInput {
 
 	
 	@Override
-	public String getDescription() {
+	public String getDefaultDescription() {
 		return I18n.tr("Password");
 	}
 	
@@ -27,7 +27,6 @@ public class Password extends TextInput {
 
 	@Override
 	public void verify(String value) throws AdminPanelException {
-		
 		
 		if(value == null) throw new AdminPanelException(AdminPanelException.TSystem,"Password is null");
 		

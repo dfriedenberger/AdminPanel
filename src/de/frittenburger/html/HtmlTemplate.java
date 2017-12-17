@@ -12,6 +12,7 @@ import java.util.NoSuchElementException;
 
 import de.frittenburger.bo.ButtonBar;
 import de.frittenburger.bo.Input;
+import de.frittenburger.bo.SelectInput;
 import de.frittenburger.core.I18n;
 import de.frittenburger.core.Page;
 import de.frittenburger.core.Wrapper;
@@ -24,10 +25,11 @@ public class HtmlTemplate {
 	private List<HtmlComponent> menu = new ArrayList<HtmlComponent>();
 	private List<HtmlComponent> menuMobile = new ArrayList<HtmlComponent>();
 	private List<HtmlComponent> content = new ArrayList<HtmlComponent>();
+	private String rootPath;
 
-	public HtmlTemplate()
+	public HtmlTemplate(String rootPath)
 	{
-		
+		this.rootPath = rootPath;
 		ClassLoader classLoader = getClass().getClassLoader();
 		InputStream is = classLoader.getResourceAsStream("index.html");
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
@@ -39,7 +41,6 @@ public class HtmlTemplate {
 
 			bufferedReader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -72,44 +73,33 @@ public class HtmlTemplate {
 				HtmlContainer div = form.addDiv("row");
 				HtmlContainer divinput = div.addDiv("col").addClass("input-field").addClass("s12");
 				String id = e.getKey();
-				divinput.addInput(id).set("type",e.getValue().getType()).addClass("validate");
-				divinput.addLabel(id).addText(e.getValue().getDescription());
+				Input input = e.getValue();
+				
+				if(input instanceof SelectInput)
+				{
+					SelectInput sInput = (SelectInput)input;
+					divinput.addSelect(id,sInput.getValues()).addClass("validate");
+				}
+				else
+				{
+					divinput.addInput(id).set("type",input.getType()).addClass("validate");
+				}
+				divinput.addLabel(id).addText(input.getDescription());
 		}
 	
 		ButtonBar bar = f.getButtonbBar();
+		form.addComponent(createButtonBar(bar));
 		
-		HtmlContainer div = form.addDiv("row"); //ButtonBar
-		HtmlContainer divbtn = div.addDiv("col").addClass("s12");
-
-		for(String btn : new String[]{ButtonBar.Cancel, ButtonBar.Save , ButtonBar.Login })
-		{
-			
-			//if(btn.equals(ButtonBar.Cancel)) divbtn.addClass("pull-s10");
-			
-			if(!bar.hasButton(btn)) continue;
-			HtmlContainer button = new HtmlContainer("button").
-					addClass("btn").addClass("waves-effect");
-			
-			if(btn.equals(ButtonBar.Save)) button.addClass("right").addClass("waves-light").addClass("post");
-			if(btn.equals(ButtonBar.Login)) button.addClass("right").addClass("waves-light").addClass("post");
-
-			if(btn.equals(ButtonBar.Cancel)) button.addClass("white").addClass("black-text");
-			
-			button.addText(I18n.translate(btn));
-			divbtn.addComponent(button);
-
-		}	
-
 		content.add(form);
 		
 	}
 
-	public void addContentCollection(List<Entry<String, Form>> data, String url) {
+	public <T extends Form> void addContentCollection(List<Entry<String, T>> data, String url, boolean addButton) {
 
 		
 		HtmlContainer list = new HtmlContainer("ul").addClass("collection");
 		
-		for(Entry<String, Form> e : data)
+		for(Entry<String, T> e : data)
 		{
 			Form f = e.getValue();
 			
@@ -120,21 +110,20 @@ public class HtmlTemplate {
 			
 			for(Entry<String,Input> i : inputs)
 			{
-				
-				item.addText(i.getValue().getValue()+" ");
+				if(i.getValue().mustProtect())
+					item.addText("*** ");
+				else
+					item.addText(i.getValue().getValue()+" ");
 			}
 			
-			item.addLink("#!").addClass("secondary-content").addIcon("material-icons","send");
-			
-			list.addComponent(item);			
+			item.addAhref("#!").addClass("secondary-content").addIcon("material-icons","edit");
+			item.addAhref("#!").addClass("secondary-content").addIcon("material-icons","delete");
+
 		}
 		
-		
-
-		
-		
-		
 		content.add(list);
+		if(addButton)
+			content.add(createButtonBar(new ButtonBar(ButtonBar.Add)));
 	}
 	
 	public void addNotice(String text) {
@@ -194,12 +183,46 @@ public class HtmlTemplate {
 		}
 	}
 
+	public HtmlContainer createButtonBar(ButtonBar bar) {
+		
+		HtmlContainer div = new HtmlContainer("row"); //ButtonBar
+		HtmlContainer divbtn = div.addDiv("col").addClass("s12");
+
+		for(String btn : new String[]{ButtonBar.Cancel, ButtonBar.Save , ButtonBar.Add , ButtonBar.Login })
+		{
+			
+			//if(btn.equals(ButtonBar.Cancel)) divbtn.addClass("pull-s10");
+			
+			if(!bar.hasButton(btn)) continue;
+			HtmlContainer button = new HtmlContainer("button").
+					addClass("btn").addClass("waves-effect");
+			
+			if(btn.equals(ButtonBar.Save)) button.addClass("right").addClass("waves-light").addClass("post");
+			if(btn.equals(ButtonBar.Login)) button.addClass("right").addClass("waves-light").addClass("post");
+			if(btn.equals(ButtonBar.Add)) button.addClass("right").addClass("waves-light").addClass("create");
+
+			if(btn.equals(ButtonBar.Cancel)) button.addClass("white").addClass("black-text").addClass("cancel");
+			
+			button.addText(I18n.translate(btn));
+			divbtn.addComponent(button);
+
+		}	
+		return div;
+		
+	}
+	
+	
 	private void writeTo(String key, HtmlWriter writer) {
 		
 		
 		if(key.equals("title"))
 		{
 			writer.print("Admin Panel");
+			return;
+		}
+		if(key.equals("root"))
+		{
+			writer.print(rootPath);
 			return;
 		}
 		if(key.equals("menu"))
@@ -225,6 +248,8 @@ public class HtmlTemplate {
 		throw new NoSuchElementException(key);
 		
 	}
+
+	
 
 
 

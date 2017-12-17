@@ -112,14 +112,6 @@ public class HtmlContainer implements HtmlComponent {
 		comment.text = text;
 		components.add(comment);
 	}
-
-	public HtmlContainer addLink(String href) {
-
-		HtmlContainer link = new HtmlContainer("link");
-		link.set("href",href);
-		components.add(link);
-		return link;
-	}
 	
 	public HtmlContainer addDiv(String class1) {
 		HtmlContainer div = new HtmlContainer("div").addClass(class1);
@@ -139,7 +131,22 @@ public class HtmlContainer implements HtmlComponent {
 		components.add(input);
 		return input;
 	}
-	
+	public HtmlContainer addSelect(String id, String[] values) {
+
+		HtmlContainer select = new HtmlContainer("select").set("name",id);
+		for(String val : values)
+			select.addOption(val);
+		components.add(select);
+		return select;
+	}
+
+	public HtmlContainer addOption(String val) {
+		HtmlContainer option = new HtmlContainer("option");
+		option.addText(val);
+		components.add(option);
+		return option;
+	}
+
 	public HtmlContainer addLabel(String id) {
 		HtmlContainer label = new HtmlContainer("label").set("for",id);
 		components.add(label);
@@ -201,6 +208,7 @@ public class HtmlContainer implements HtmlComponent {
 		return li;
 	}
 
+	
 	
 
 	

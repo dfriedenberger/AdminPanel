@@ -1,19 +1,39 @@
 package de.frittenburger.bo;
 
-public interface Input {
+import de.frittenburger.core.I18n;
 
-	String getDescription();
+public abstract class Input {
 
-	String getType();
+	private String description;
 
-	void setValue(String value);
 
-	String getValue();
+	public void setDescription(String value)
+	{
+		description = value;
+	}
 
-	boolean mustProtect();
+	
+	public String getDescription()
+	{
+		if(description != null)
+			return I18n.translate(description);
+		return getDefaultDescription();
+	}
 
-	boolean mustEscape();
+	public abstract String getDefaultDescription();
 
-	void verify(String value) throws AdminPanelException;
+	
+	public abstract String getType();
+
+	public abstract void setValue(String value);
+
+	public abstract String getValue();
+
+	public abstract boolean mustProtect();
+
+	public abstract boolean mustEscape();
+
+	public abstract void verify(String value) throws AdminPanelException;
+
 
 }

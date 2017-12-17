@@ -13,9 +13,9 @@ public  class Select<T extends Form> {
 	private List<String> idList = new ArrayList<String>();
 	private Map<String,Form> formMap = new HashMap<String,Form>();
 
-	public Select(List<Entry<String, Form>> forms) {
+	public Select(List<Entry<String, T>> forms) {
 
-		for(Entry <String, Form> e : forms)
+		for(Entry <String, T> e : forms)
 		{
 			idList.add(e.getKey());
 			formMap.put(e.getKey(),e.getValue());

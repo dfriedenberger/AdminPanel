@@ -3,8 +3,14 @@
 
     $('.button-collapse').sideNav();
     $('.parallax').parallax();
-
-  
+    $('select').material_select();
+    //CRUD
+	$('button.create').click(function(e) {
+	    e.preventDefault();
+	    window.location = window.location+"/create";	
+	});
+	
+	
     $('button.post').click(function(e) {
     	
     	e.preventDefault();

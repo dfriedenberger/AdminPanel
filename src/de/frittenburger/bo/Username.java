@@ -2,7 +2,7 @@ package de.frittenburger.bo;
 
 import de.frittenburger.core.I18n;
 
-public class Port extends TextInput {
+public class Username extends TextInput {
 	
 	@Override
 	public boolean mustEscape() {
@@ -10,8 +10,10 @@ public class Port extends TextInput {
 	}
 	
 	@Override
-	public String getDescription() {
-		return I18n.tr("Port");
+	public String getDefaultDescription() {
+		return I18n.tr("User name");
 	}
 
+
+	 
 }

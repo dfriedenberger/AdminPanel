@@ -7,5 +7,8 @@ public abstract class Form {
 	
 	public abstract String getEntityName();
 
-	public abstract ButtonBar getButtonbBar();
+	public ButtonBar getButtonbBar()
+	{
+		return new ButtonBar(ButtonBar.Cancel,ButtonBar.Save);
+	}
 }

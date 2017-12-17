@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import de.frittenburger.bo.AdminPanelException;
+import de.frittenburger.core.AdminPanel;
+import de.frittenburger.core.Logger;
 import de.frittenburger.core.Page;
 import de.frittenburger.html.HtmlTemplate;
 
@@ -22,6 +24,8 @@ public class AdminPanelServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Logger logger = AdminPanel.getLogger(this.getClass().getName());
+	
 	public AdminPanelServlet() {
 	}
 
@@ -42,12 +46,15 @@ public class AdminPanelServlet extends HttpServlet {
 		if(pathInfo == null || pathInfo.equals("/"))
 		{
 			//redirect to + "/"
-			String path = request.getRequestURI();
+			String path = request.getServletPath();
 			response.sendRedirect(response.encodeRedirectURL(path+"/"+Page.welcome));
 			return;
 		}
 		
 	
+	
+		
+		
 		if(pathInfo.startsWith("/js/"))
 		{
 			stream("application/javascript",pathInfo.substring(1),response);
@@ -69,13 +76,10 @@ public class AdminPanelServlet extends HttpServlet {
 			return;
 		}
 		
-		//Debug
-	    System.out.println(sessionid);
-		
-		//Debug
-		System.out.println(pathInfo);
+		logger.debug("Request=%s sessionid=%s",pathInfo,sessionid);
 
-		HtmlTemplate template = new HtmlTemplate();
+
+		HtmlTemplate template = new HtmlTemplate(request.getServletPath());
 		GetHandler handler = new GetHandler();
 		
 		response.setContentType("text/html");
@@ -112,11 +116,12 @@ public class AdminPanelServlet extends HttpServlet {
 		if(ssn != null){
 			sessionid = ssn.getId();
 		}
-		//Debug
-	    System.out.println(sessionid);
+
 		
-		//Debug
-	    System.out.println(pathInfo);
+		
+		logger.debug("Request=%s sessionid=%s",pathInfo,sessionid);
+		
+	   
 	    
 	    Enumeration<String> names = request.getParameterNames();
 	    
@@ -127,8 +132,12 @@ public class AdminPanelServlet extends HttpServlet {
 		   
 		   for(String value : values)
 		   {
-			 //Debug
-			 System.out.println(name+" = "+value);			 
+
+			   if(name.toLowerCase().contains("pass"))
+				   logger.debug("%s=******",name);
+			   else
+				   logger.debug("%s=%s",name,value);
+
 		   }
 		   
 	    }
@@ -159,7 +168,7 @@ public class AdminPanelServlet extends HttpServlet {
 		
 		}
 	    //Debug 
-		System.out.println(mesg.ToJson());
+		logger.dump(mesg.ToJson(),"Json Response");
 		response.setContentType("application/json");
 		response.setStatus(HttpServletResponse.SC_OK);
 		response.getWriter().println(mesg.ToJson());

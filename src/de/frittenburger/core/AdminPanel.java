@@ -13,12 +13,18 @@ public class AdminPanel {
 
 	private static ConfigurationContext configurationContext = new ConfigurationContext();
 	public static SecretProvider secretProvider = null;
-	
+	private static LoggerListener loggerListener = null;
 	
 	public static void setSecretProvider(SecretProvider sp)
 	{
 		secretProvider = sp;
 	}
+	
+	public static void setLoggerListener(LoggerListener lL)
+	{
+		loggerListener = lL;
+	}
+	
 	public static void withDefaults(Locale locale) {
 		
 		
@@ -55,6 +61,11 @@ public class AdminPanel {
 		return configurationContext;
 	}
 	
+	public static Logger getLogger(String name) {
+		return new Logger(name,loggerListener);
+	}
+
+
 		
 
 }

@@ -10,7 +10,7 @@ public class EmailAddress extends TextInput {
 	}
 	
 	@Override
-	public String getDescription() {
+	public String getDefaultDescription() {
 		return I18n.tr("E-Mail Address");
 	}
 
@@ -18,7 +18,8 @@ public class EmailAddress extends TextInput {
 	public String getType() {
 		return "email";
 	}
-
+	
+	
 	
 	private static boolean isValidEmailAddress(String email) {
         String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";

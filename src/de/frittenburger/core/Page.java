@@ -39,20 +39,23 @@ public class Page {
 		return key;
 	}
 	
-	public void setForm(Class<? extends Form> form) {
-		setCallback(new FormPageCallBack(form));
+	public <T extends Form> void setForm(Class<T> form) {
+		setCallback(new FormPageCallBack<T>(form,false));
 	}
-
+	public <T extends Form> void setSingletonForm(Class<T> form) {
+		setCallback(new FormPageCallBack<T>(form,true));
+	}
 	
 	public void setCallback(PageCallback pageCallback) {
 		this.pageCallback = pageCallback;
 		this.pageCallback.setPageKey(key);
-
 	}
 
 	public PageCallback getCallback() {
 		return pageCallback;
 	}
+
+
 
 
 

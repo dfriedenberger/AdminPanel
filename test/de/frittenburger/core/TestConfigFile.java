@@ -1,4 +1,4 @@
-package de.frittenburger.app;
+package de.frittenburger.core;
 
 import static org.junit.Assert.*;
 

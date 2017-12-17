@@ -10,6 +10,7 @@ public class ButtonBar {
 	public static final String Cancel   = I18n.marktr("Cancel");
 	public static final String Save     = I18n.marktr("Save");
 	public static final String Login    = I18n.marktr("Login");
+	public static final String Add      = I18n.marktr("Add");
 
 	private Set<String> buttons;
 	public ButtonBar(String ... btns) {

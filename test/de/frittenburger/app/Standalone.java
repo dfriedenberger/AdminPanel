@@ -15,6 +15,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import de.frittenburger.core.AdminPanel;
 import de.frittenburger.core.Group;
+import de.frittenburger.core.LoggerListener;
 import de.frittenburger.core.SecretProvider;
 import de.frittenburger.form.EmailAccount;
 import de.frittenburger.form.DataFile;
@@ -27,6 +28,26 @@ public class Standalone {
 		//Create Jetty Server
 		Server server = new Server(new InetSocketAddress("localhost", 3333));
 
+		
+		AdminPanel.setLoggerListener(new LoggerListener() {
+
+			@Override
+			public void log(int level, String message,String dump) {
+				if(level == 0)
+				{
+					System.err.println(message);
+					if(dump != null)
+						System.err.println(dump);
+				}
+				else
+				{
+					System.out.println(message);
+					if(dump != null)
+						System.out.println(dump);
+				}
+			}
+		});
+		
 		AdminPanel.setSecretProvider(new SecretProvider() {
 
 			@Override
@@ -45,7 +66,7 @@ public class Standalone {
 		
 		AdminPanel.withDefaults(Locale.GERMANY);
 		AdminPanel.createPage("account","Kontos").setForm(EmailAccount.class);
-		AdminPanel.createPage("files","Dateien").setForm(DataFile.class);
+		AdminPanel.createPage("files","Dateien").setSingletonForm(DataFile.class);
 		AdminPanel.selection().forGroup(Group.User).forPage("account").forPage("files").allowAll();
 
 		

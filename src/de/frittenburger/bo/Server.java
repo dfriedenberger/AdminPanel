@@ -10,9 +10,10 @@ public class Server	extends TextInput {
 		}
 		
 		@Override
-		public String getDescription() {
+		public String getDefaultDescription() {
 			return I18n.tr("Server");
 		}
 
+	
 		
 }

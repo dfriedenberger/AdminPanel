@@ -15,6 +15,26 @@ The release contains:
 ## Configure AdminPanel
 ```java
 
+		//Implement logger interface
+		AdminPanel.setLoggerListener(new LoggerListener() {
+
+			@Override
+			public void log(int level, String message,String dump) {
+				if(level == 0)
+				{
+					System.err.println(message);
+					if(dump != null)
+						System.err.println(dump);
+				}
+				else
+				{
+					System.out.println(message);
+					if(dump != null)
+						System.out.println(dump);
+				}
+			}
+		});
+
 		//Implement secret provider for encrypting secret information
 		AdminPanel.setSecretProvider(new SecretProvider() {
 
